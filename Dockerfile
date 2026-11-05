@@ -9,8 +9,9 @@ FROM ${TTRSS_IMAGE}
 RUN addgroup -g 1000 app \
     && adduser -D -h /var/www/html -G app -u 1000 app \
     && apk add --no-cache nginx supervisor \
-    && mkdir -p /run/nginx /var/log/supervisor /var/log/nginx /var/log/php85 /var/www/html \
-    && chmod -R 777 /run /tmp /var/log /var/www/html /etc/php85 /etc/ssl/certs \
+    && mkdir -p /run/nginx /var/log/supervisor /var/log/nginx /var/log/php85 /var/www/html /var/lib/nginx/tmp \
+    && chmod -R 777 /run /tmp /var/log /var/www/html /etc/php85 /etc/ssl/certs /var/lib/nginx \
+    && sed -i '/^user /d' /etc/nginx/nginx.conf \
     && rm -f /etc/nginx/http.d/default.conf
 
 ENV APP_INSTALL_BASE_DIR=/var/www/html
