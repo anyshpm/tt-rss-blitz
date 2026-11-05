@@ -1,15 +1,17 @@
 #!/bin/sh
 while [ $# -gt 0 ]; do
     case "$1" in
-        -u|-E|-Eu|-uE)
+        -u)
             shift
+            if [ "$1" = "app" ]; then
+                shift
+            fi
             ;;
-        app)
+        -E|-Eu|-uE)
             shift
-            ;;
-        --)
-            shift
-            break
+            if [ "$1" = "app" ]; then
+                shift
+            fi
             ;;
         -*)
             shift
@@ -19,4 +21,4 @@ while [ $# -gt 0 ]; do
             ;;
     esac
 done
-exec "$@"
+exec env "$@"
