@@ -4,11 +4,13 @@
 ARG TTRSS_IMAGE=ghcr.io/tt-rss/tt-rss:latest
 FROM ${TTRSS_IMAGE}
 
-# The upstream app image is Alpine-based. Add Nginx and Supervisor to the
-# same runtime so Nginx can reach PHP-FPM over loopback.
-RUN apk add --no-cache nginx supervisor \
-    && mkdir -p /run/nginx /var/log/supervisor /var/www/html \
-    && chmod -R 777 /run /var/log/supervisor /var/log/nginx /var/www/html \
+# The upstream app image is Alpine-based. Pre-create the app user/group
+# and add Nginx + Supervisor to the same runtime.
+RUN addgroup -g 1000 app \
+    && adduser -D -h /var/www/html -G app -u 1000 app \
+    && apk add --no-cache nginx supervisor \
+    && mkdir -p /run/nginx /var/log/supervisor /var/log/nginx /var/log/php85 /var/www/html \
+    && chmod -R 777 /run /tmp /var/log /var/www/html /etc/php85 \
     && rm -f /etc/nginx/http.d/default.conf
 
 ENV APP_INSTALL_BASE_DIR=/var/www/html
@@ -16,8 +18,9 @@ ENV APP_INSTALL_BASE_DIR=/var/www/html
 COPY nginx/default.conf /etc/nginx/http.d/default.conf
 COPY supervisord.conf /etc/supervisord.conf
 COPY start-nginx.sh /usr/local/bin/start-nginx.sh
+COPY shims/ /usr/local/bin/
 
-RUN chmod 0755 /usr/local/bin/start-nginx.sh
+RUN chmod 0755 /usr/local/bin/*
 
 # blitz.cloud should route public HTTP traffic to this port.
 EXPOSE 8080

@@ -1,0 +1,2 @@
+#!/bin/sh
+/bin/chown "$@" 2>/dev/null || true
