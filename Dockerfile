@@ -4,12 +4,11 @@
 ARG TTRSS_IMAGE=ghcr.io/tt-rss/tt-rss:latest
 FROM ${TTRSS_IMAGE}
 
-USER root
-
 # The upstream app image is Alpine-based. Add Nginx and Supervisor to the
 # same runtime so Nginx can reach PHP-FPM over loopback.
 RUN apk add --no-cache nginx supervisor \
     && mkdir -p /run/nginx /var/log/supervisor /var/www/html \
+    && chmod -R 777 /run /var/log/supervisor /var/log/nginx /var/www/html \
     && rm -f /etc/nginx/http.d/default.conf
 
 ENV APP_INSTALL_BASE_DIR=/var/www/html
