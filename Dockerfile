@@ -24,7 +24,7 @@ COPY shims/ /usr/local/bin/
 RUN chmod 0755 /usr/local/bin/*
 
 # blitz.cloud should route public HTTP traffic to this port.
-EXPOSE 8080
+EXPOSE 8080 80
 
 # Keep this folder in blitz.cloud so the initialized TT-RSS working copy,
 # local plugins/themes and runtime data survive app restarts.

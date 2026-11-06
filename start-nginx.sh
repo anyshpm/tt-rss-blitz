@@ -8,5 +8,10 @@ until "$PHP_BIN" -r '$s = @fsockopen("127.0.0.1", 9000); exit($s ? 0 : 1);' >/de
     sleep 1
 done
 
-echo "PHP-FPM is ready; starting Nginx on :8080."
+# If blitz.cloud passes a PORT env var that is not 80 or 8080, add it dynamically
+if [ -n "${PORT:-}" ] && [ "$PORT" != "80" ] && [ "$PORT" != "8080" ]; then
+    sed -i "s/listen 80;/listen 80;\n    listen $PORT;\n    listen [::]:$PORT;/" /etc/nginx/http.d/default.conf
+fi
+
+echo "PHP-FPM is ready; starting Nginx on :8080 and :80 ${PORT:+(and :$PORT)}."
 exec nginx -g 'daemon off;'
