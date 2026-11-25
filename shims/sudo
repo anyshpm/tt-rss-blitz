@@ -1,4 +1,8 @@
 #!/bin/sh
+if [ "$(id -u)" = "0" ] && [ -x /usr/bin/sudo ]; then
+    exec /usr/bin/sudo "$@"
+fi
+
 while [ $# -gt 0 ]; do
     case "$1" in
         -u)
